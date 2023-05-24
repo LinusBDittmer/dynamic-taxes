@@ -1,0 +1,4 @@
+# Basic requirements
+numpy
+scipy
+matplotlib
