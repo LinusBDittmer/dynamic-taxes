@@ -24,7 +24,7 @@ class Loader:
             with open(outfile) as of:
                 esa = dynamictaxes.ExcitedStateAbsorptionSpectrum()
                 '''
-                The * MAGIC *
+                The * mAGIC *
                 '''
                 self.ta_spectrum.add_esa_spectrum(esa)
 
