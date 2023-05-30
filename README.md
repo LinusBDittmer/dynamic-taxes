@@ -38,14 +38,15 @@ dyntax [...]
 ```
 The following arguments are allowed:
 
-- `--script <script-file>` The instructions should be read from <script-file>. See Script Files in Dynamic-Taxes for more information.
+- `--config` Opens the configuration file. Dynamic-Taxes might force you to do this if important variables are unset
+- `--script <script-file>` The instructions should be read from `<script-file>`. See Script Files in Dynamic-Taxes for more information.
 - `--noexec` Build the python (and perhaps qsub file), but do not execute them.
 - `--cluster` Execute the script on the cluster as a job with qsub
 - `--local` Execute the script locally. If both `--cluster` and `--local` are set, `--cluster` takes priority.
 - `--load-dir <file>` Load ESA data from a directory of .out files, which are named `[...]_[number].out` (Regex: `[a-zA-Z0-9]*_[0-9]+\.out`) The trailing number is used as an indication for the timestamp.
 - `--load-json <file>` Load ESA data from a .json file.
-- `--save-json <output>` Only activate when `--load-dir` is active too. The data loaded from the directory is then saved into <output>.
-- `--ta <output>` Render the TA spectrum. Make sure that the `--script` flag is not set if using this. The file will be rendered to <output>.png
+- `--save-json <output>` Only activate when `--load-dir` is active too. The data loaded from the directory is then saved into `<output>`.
+- `--ta <output>` Render the TA spectrum. Make sure that the `--script` flag is not set if using this. The file will be rendered to `<output>`.png
 - `--esa <output>` Render all ESA spectra to the output
   
 ## Script Files in Dynamic-Taxes
@@ -59,7 +60,9 @@ For more complex instructions, Dynamic-Taxes allows the generation of script fil
 - `render every <num>[+<offset>] esa to <output>` If data has been loaded, every _num_ ESA spectrum starting with _offset_ (if specified) is rendered to `<output>_[timestamp].png`
 - `# Comment` A comment. Inline comments are also allowed.
 
-### Examples
+## Examples
+
+### Scripting Examples
 
 ```
 # This is an example code that first loads from a JSON file and then a directory
@@ -78,4 +81,23 @@ render all esa to ./esa_output/esa
 render every 5+1 esa to ./output/esa_offset
 ```
 
+### Command line Examples
+
+Suppose you have the following data structre and you want the TA spectrum as well as all ESA spectrum rendered. 
+
+```
+├── data
+│   ├── traj_0001.out
+│   ├── traj_0100.out
+│   ├── traj_0200.out
+│   ├── ...
+│   └── traj_2500.out
+└── ... 
+```
+
+The ESA spectra should be rendered to a new folder called `output`. Note that you do not have to manually create the output folder (or child folders thereof), Dynamic-Taxes does this automatically. The only command you have run is:
+
+```
+dynamic-taxes --load-dir ./data --ta ta_spectrum.png --esa output/esa
+```
 
