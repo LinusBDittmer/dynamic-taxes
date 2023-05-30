@@ -46,6 +46,36 @@ The following arguments are allowed:
 - `--load-json <file>` Load ESA data from a .json file.
 - `--save-json <output>` Only activate when `--load-dir` is active too. The data loaded from the directory is then saved into <output>.
 - `--ta <output>` Render the TA spectrum. Make sure that the `--script` flag is not set if using this. The file will be rendered to <output>.png
-- `--all-esa <output>` Render all ESA spectra to the output
+- `--esa <output>` Render all ESA spectra to the output
   
 ## Script Files in Dynamic-Taxes
+
+For more complex instructions, Dynamic-Taxes allows the generation of script files which allow multiple lines of pseudocode to be executed for generation of TA and ESA spectra. The following commands are allowed:
+
+- `load <directory|jsonfile.json>` Loads all data from the specified location. If the specified locator ends in `.json`, it is treated as a JSON file, otherwise it is assumed to be a directory.
+- `read <directory|jsonfile.json>` Alias for `load`
+- `render ta to <output>` If data has been loaded, the resulting TA spectrum is rendered to `<output>.png`
+- `render all esa to <output>` If data has been loaded, all ESA spectra are rendered to `<output>_[esatimestamp].png`
+- `render every <num>[+<offset>] esa to <output>` If data has been loaded, every _num_ ESA spectrum starting with _offset_ (if specified) is rendered to `<output>_[timestamp].png`
+- `# Comment` A comment. Inline comments are also allowed.
+
+### Examples
+
+```
+# This is an example code that first loads from a JSON file and then a directory
+
+# Loading data
+# Note that loading from multiple sources does not override any data and the ESA spectra are resorted according to their timestamp after loading.
+load data_json.json
+load ./data_directory
+
+# Rendering the TA spectrum
+render ta to ./output/ta_spectrum.png
+# Rendering all ESA spectra
+# Suppose the timestamp difference is 100, then the filenames will be esa_0.png, esa_100.png, ...
+render all esa to ./esa_output/esa
+# Render esa spectra of index 1, 6, 11, ...
+render every 5+1 esa to ./output/esa_offset
+```
+
+

@@ -17,7 +17,7 @@ class Loader:
 
     def load_from_dir(self, dirpath, save_json=False, jsonpath='./content.json', compact=False):
         all_content = os.listdir(dirpath)
-        regex = re.compile("[a-zA-Z0-9]*_[0-9]*\.out")
+        regex = re.compile("[a-zA-Z0-9]*_[0-9]+\.out")
         out_files = list(filter(regex.match, all_content))
 
         for outfile_index, outfile in enumerate(out_files):

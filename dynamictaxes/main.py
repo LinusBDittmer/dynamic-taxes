@@ -57,7 +57,9 @@ def gen_pytext(lines):
             continue
         if line[0] == '#':
             continue
-        
+        if '#' in line:
+            line = line.split('#')[0]
+
         if line.startswith("load") or line.startswith("read"):
             if not loader_exists:
                 pytext += "loader = dt.Loader()\n"
