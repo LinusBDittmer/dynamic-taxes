@@ -10,6 +10,9 @@ import matplotlib
 import matplotlib.colors as colours
 import json
 import re
+import os
+import dynamictaxes as dt
+
 
 class ExcitedStateAbsorptionSpectrum:
 
@@ -18,24 +21,28 @@ class ExcitedStateAbsorptionSpectrum:
         self.multiplicity = 1
         self.time = 0
         self.energies = numpy.zeros(1)
-        self.energy_unit = 'ev'
+        self.energy_unit = dt.get_config("energy_unit")
         self.transition_moments = numpy.zeros(1)
-        self.excited_state_multiplicities = numpy.ones(1, dtype=numpy.int32)
-        self.peak_breadth = 100.0
-        self.resolution = 500
-        self.dpi = 200
-        self.wavelength_range = (200.0, 1000.0)
-        self.normalise_peakheight = True
-        self.peak_style = 'bar'
+        self.excited_state_labels = ["S1"]
+        self.peak_breadth = dt.get_config("peak_breadth")
+        self.resolution = dt.get_config("wavelength_res")
+        self.dpi = dt.get_config("dpi")
+        self.wavelength_range = [dt.get_config("wavelength_range_lower"), dt.get_config("wavelength_range_upper")]
+        self.normalise_peakheight = dt.get_config("normalise_peakheight")
+        self.peak_style = dt.gt_config("peak_style")
+        self.cmap = matplotlib.colormaps['Spectral']
+        self.norm = colours.Normalize(vmin=350, vmax=820, clip=False)
+
 
     def render(self, path, filetype='png', ax=None):
-        filepattern = re.compile("[a-zA-Z0-9\-]*.png")
+        filepattern = re.compile("[a-zA-Z0-9\-]*." + filetype)
         if filepattern.match(path).string != path:
             filepattern2 = re.compile("[a-zA-Z0-9\-]*.")
             if filepattern2.match(path).string != path:
                 path += "."
             path += filetype
-
+        directory = path[:path.rfind("/")]
+        os.makedirs(directory, exist_ok=True)
 
         wavelength_space = numpy.linspace(self.wavelength_range[0], self.wavelength_range[1], num=self.resolution)
         norm_tm = numpy.copy(self.transition_moments)
@@ -50,7 +57,6 @@ class ExcitedStateAbsorptionSpectrum:
        
         ax.margins(x=0, y=0)
         ax.set_xlim(self.wavelength_range[0], self.wavelength_range[1])
-        ax.set_ylim(0.0, 1.25)
         ax.set_xlabel("Wavelength [nm]")
         ax.set_ylabel("Rel. Transition Moment")
         gaussians = numpy.zeros((len(self.energies), self.resolution))
@@ -59,14 +65,13 @@ class ExcitedStateAbsorptionSpectrum:
             gaussians[i] = self.gaussian(wavelength_space, nm, norm_tm[i])
 
         absorption = numpy.sum(gaussians, axis=0)
-        absorption /= numpy.amax(absorption)
-        cmap = matplotlib.colormaps['Spectral']
-        norm = colours.Normalize(vmin=350, vmax=820, clip=True)
+        #absorption /= numpy.amax(absorption)
+        ax.set_ylim(0.0, numpy.amax(absorption)*1.1)
 
         peak_styles = [s.strip() for s in self.peak_style.split(",")]
         for i, g in enumerate(gaussians):
-            gc = cmap(norm(1239.841 / self.energies[i]))
-            label = self.get_multiplicity_label(self.multiplicity) + "$_" + str(self.state_num) + " \\rightarrow$ " + self.get_multiplicity_label(self.excited_state_multiplicities[i]) + "$_" + str(i+self.state_num+1) + "$" 
+            gc = self.col(1239.841 / self.energies[i])
+            label = self.get_multiplicity_label(self.multiplicity) + "$_" + str(self.state_num) + " \\rightarrow$ " + self.reformat_state_label(self.excited_state_labels[i]) 
             if 'gauss' in peak_styles or 'band' in peak_styles:
                 gc = list(gc)
                 gc[3] = 0.5
@@ -79,12 +84,20 @@ class ExcitedStateAbsorptionSpectrum:
             xs = wavelength_space[i:i+2]
             ys = absorption[i:i+2]
             ci = i * (self.wavelength_range[1] - self.wavelength_range[0]) / self.resolution + self.wavelength_range[0]
-            ax.plot(xs, ys, c=cmap(norm(ci)))
+            ax.plot(xs, ys, c=self.col(ci))
 
         plt.legend()
 
         plt.savefig("test.png", dpi=self.dpi, bbox_inches='tight')
         
+
+    def col(self, nm):
+        n = self.norm(nm)
+        black = numpy.array([0.0, 0.0, 0.0, 1.0])
+        if n < 0 or n > 1:
+            return black
+        else:
+            return self.cmap(n)
 
     def gaussian(self, xvals, centre, height):
         adjusted_xvals = (xvals - centre) / self.peak_breadth
@@ -94,11 +107,13 @@ class ExcitedStateAbsorptionSpectrum:
     def get_multiplicity_label(self, m):
         return ["", "S", "D", "T", "Q"][int(m)]
 
+    def reformat_state_label(self, l):
+        return l[0] + "$_" + l[1] + "$"
+
 
 if __name__ == '__main__':
     esa = ExcitedStateAbsorptionSpectrum()
     esa.energies = numpy.linspace(2.0, 4.0, 4)
     esa.transition_moments = numpy.linspace(0.1, 0.5, 4)
-    esa.excited_state_multiplicities = numpy.ones(4, dtype=numpy.int32)
-    esa.excited_state_multiplicities[2] = 2
+    esa.excited_state_labels = ["S2", "S3", "T1", "S4"]
     esa.render('test.png')
