@@ -57,7 +57,7 @@ The following arguments are allowed:
 For more complex instructions, Dynamic-Taxes allows the generation of script files which allow multiple lines of pseudocode to be executed for generation of TA and ESA spectra. The following commands are allowed:
 
 | Command | Description |
-| ... | ... |
+| --- | --- |
 | `set config <key> to <value>` | Sets the value for the config key `<key>` to `<value>`. Note that this is completely constrained to this script's runtime and does not affect the default values. Use `dt --config` for that. |
 | `load <directory|jsonfile.json>` | Loads all data from the specified location. If the specified locator ends in `.json`, it is treated as a JSON file, otherwise it is assumed to be a directory. |
 | `read <directory|jsonfile.json>` | Alias for `load`. |
