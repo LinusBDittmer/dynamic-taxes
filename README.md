@@ -126,6 +126,7 @@ set config linewidth to 2.5
 set config normalise_peak_height to False
 # Setting a String
 set config ta_title to This is a TA spectrum 	# no apostrophes!
+```
 
 ## Examples
 
