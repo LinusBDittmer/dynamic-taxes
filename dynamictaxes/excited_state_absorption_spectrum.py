@@ -33,6 +33,15 @@ class ExcitedStateAbsorptionSpectrum:
         self.cmap = matplotlib.colormaps['Spectral']
         self.norm = colours.Normalize(vmin=350, vmax=820, clip=False)
 
+    def __eq__(self, other):
+        if len(self.energies) != len(other.energies):
+            return False
+        for i in range(len(self.energies)):
+            if abs(self.energies[i] - other.energies[i]) > 10**-7:
+                return False
+            if abs(self.transition_moments[i] - other.transition_moments[i]) > 10**-7:
+                return False
+        return True
 
     def render(self, path, filetype='png', ax=None):
         filepattern = re.compile("[a-zA-Z0-9\-]*." + filetype)
@@ -90,6 +99,19 @@ class ExcitedStateAbsorptionSpectrum:
 
         plt.savefig("test.png", dpi=self.dpi, bbox_inches='tight')
         
+    def _eval_scalar(self, nm):
+        val = 0.0
+        for i in range(len(self.energies)):
+            val += self.gaussian(nm, 1239.841 / self.energies[i], self.transition_moments[i])
+        return val
+
+    def evaluate(self, nm):
+        if type(nm) is not numpy.ndarray:
+            return self._eval_scalar(nm)
+        val = numpy.zeros(len(nm))
+        for i in range(len(self.energies)):
+            val += self.gaussian(nm, 1239.841 / self.energies[i], self.transition_moments[i])
+        return val
 
     def col(self, nm):
         n = self.norm(nm)

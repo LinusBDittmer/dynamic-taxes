@@ -34,3 +34,6 @@ def set_config(config_dict):
     global configs
     configs = config_dict
 
+def set_config_key(key, val):
+    global configs
+    configs[key] = val

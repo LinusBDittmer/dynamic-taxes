@@ -15,6 +15,9 @@ class Loader:
     def __init__(self):
         self.ta_spectrum = dynamictaxes.TransientAbsorptionSpectrum()
 
+    def reset(self):
+        self.ta_spectrum = dynamictaxes.TransientAbsorptionSpectrum()
+
     def load_from_dir(self, dirpath, save_json=False, jsonpath='./content.json', compact=False):
         all_content = os.listdir(dirpath)
         regex = re.compile("[a-zA-Z0-9]*_[0-9]+\.out")

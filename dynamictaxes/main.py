@@ -61,6 +61,14 @@ def gen_pytext(lines):
         if '#' in line:
             line = line.split('#')[0]
 
+        if line.startswith("set config"):
+            line = line.replace("set config", "").strip()
+            line_list = None
+            if "=" in line:
+                line_list = [l.strip() for l in line.split("=")]
+            else:
+                line_list = [l.strip() for l in line.split(" to ")]
+            pytext += "dt.set_config_key(\"" + line_list[0] + "\", \"" + line_list[1] + "\")\n"
         if line.startswith("load") or line.startswith("read"):
             if not loader_exists:
                 pytext += "loader = dt.Loader()\n"
@@ -109,6 +117,21 @@ def gen_pytext(lines):
                     esa_shortcut = True
                 pytext += "for i in range(" + offset + ", len(esa_spectra), " + dist + "):\n"
                 pytext += "    esa_spectra[i].render(\"" + path + "_\" + str(i))\n"
+            elif line_list[1].lower() == "esa" and line_list[2].isdigit():
+                assert line_list[3] == "to", f"Illegal syntax. Must be like \"render esa 5 to ...\""
+                path = line_list[4]
+                if not esa_shortcut:
+                    pytext += "esa_spectra = loader.ta_spectrum.esa_spectra\n"
+                    esa_shortcut = True
+                pytext += "esa_spectra[" + line_list[2] + "].render(\"" + path + "\")\n"
+            elif line_list[1].lower() == "slice":
+                assert line_list[2] == "at" and line_list[3] == "wavelength" and line_list[4].isdigit() and line_list[5] == "to", f"Illegal syntax. Must be like \"render slice at wavelength 250 to ...\""
+                path = line_list[6]
+                pytext += "loader.ta_spectrum.render_mono_slice(" + line_list[4] + ", \"" + path + "\")\n"
+            elif (line_list[1].lower() == "averaged" or line_list[1].lower() == "avg") and line_list[2] == "slice":
+                assert line_list[3] == "at" and line_list[4] == "wavelength" and line_list[5].isdigit() and line_list[6] == "spanning" and line_list[7].isdigit() and line_list[8] == "to", f"Illegal syntax. Must be like \"render avg slice at wavelength 250 spanning 50 to ...\""
+                path = line_list[9]
+                pytext += "loader.ta_spectrum.render_avg_slice(" + line_list[5] + ", " + line_list[7] + ", \"" + path + "\")\n"
 
     return pytext
 
@@ -119,6 +142,7 @@ def make_qsub_script(args_dict):
     template = template.replace("{username}", dynamictaxes.get_config("username"))
     template = template.replace("{conda_env}", dynamictaxes.get_config("conda_env"))
     template = template.replace("{pyscript}", args_dict["pyscript"])
+    template = template.replace("{selftime}", args_dict["selftime"])
     args_dict["qsubscript"] = "dttemp" + args_dict["selftime"]
     with open(args_dict["qsubscript"]+".sh", "w") as qsubf:
         qsubf.write(template)
@@ -144,6 +168,12 @@ def prepare_script(args_dict):
         with open(script_path, 'r') as sf:
             lines = sf.readlines()
         lines = [l.replace("\n", "").strip() for l in lines]
+        if "set config exec_mode to local" in lines:
+            args_dict['local'] = True
+            args_dict['cluster'] = False
+        elif "set config exec_mode to cluster" in lines:
+            args_dict['cluster'] = True
+            args_dict['local'] = False
         pytext = gen_pytext(lines)
         args_dict["pyscript"] = "pytemp" + args_dict["selftime"]
         with open(args_dict["pyscript"]+".py", "w") as pf:
@@ -191,6 +221,7 @@ def exec_script(args):
         subprocess.run(["qsub", args["qsubscript"]+".sh"])
     elif args["local"]:
         subprocess.run(["python", args["pyscript"]+".py"])
+        subprocess.run(["rm", "-f", "*"+args["selftime"]+"*"])
 
 def main():
     configs_unset = load_configs()

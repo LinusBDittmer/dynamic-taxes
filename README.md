@@ -53,24 +53,67 @@ The following arguments are allowed:
 
 For more complex instructions, Dynamic-Taxes allows the generation of script files which allow multiple lines of pseudocode to be executed for generation of TA and ESA spectra. The following commands are allowed:
 
-- `load <directory|jsonfile.json>` Loads all data from the specified location. If the specified locator ends in `.json`, it is treated as a JSON file, otherwise it is assumed to be a directory.
-- `read <directory|jsonfile.json>` Alias for `load`
-- `render ta to <output>` If data has been loaded, the resulting TA spectrum is rendered to `<output>.png`
-- `render all esa to <output>` If data has been loaded, all ESA spectra are rendered to `<output>_[esatimestamp].png`
-- `render every <num>[+<offset>] esa to <output>` If data has been loaded, every _num_ ESA spectrum starting with _offset_ (if specified) is rendered to `<output>_[timestamp].png`
-- `# Comment` A comment. Inline comments are also allowed.
+- `set config <key> to <value>`
+Sets the value for the config key `<key>` to `<value>`. Note that this is completely constrained to this script's runtime and does not affect the default values. Use `dt --config` for that.
+- `load <directory|jsonfile.json>` 
+Loads all data from the specified location. If the specified locator ends in `.json`, it is treated as a JSON file, otherwise it is assumed to be a directory.
+- `read <directory|jsonfile.json>` 
+Alias for `load`
+- `render ta to <output>` 
+If data has been loaded, the resulting TA spectrum is rendered to `<output>.png`
+- `render all esa to <output>` 
+If data has been loaded, all ESA spectra are rendered to `<output>_[esatimestamp].png`
+- `render every <num>[+<offset>] esa to <output>` 
+If data has been loaded, every _num_ ESA spectrum starting with _offset_ (if specified) is rendered to `<output>_[timestamp].png`
+- `render esa <num> to <output>`
+If data has been loaded, the ESA spectrum with index _num> is rendered to `<output>.png`. _Keep in mind that indexing always starts at 0_
+- `render slice at wavelength <wavelength> to <output>` 
+If data has been loaded, a slice of the TA spectrum at `<wavelengt>` nm is rendered to `<output>.png`
+- `render <avg|averaged> slice at wavelength <wavelength> spanning <halfspan> to <output>`
+If data has been loaded, the time-dependent absorption is averaged between `<wavelength> - <halfspan>` and `<wavelength> + <halfspan>` and the standard deviation over said interval is calculated. It is rendered to `<output>.png`
+- `# Comment` 
+A comment. Inline comments are also allowed.
 
 ## Examples
 
-### Scripting Examples
+In all subseqent examples, we will assume that our directory has the following structure:
 
 ```
-# This is an example code that first loads from a JSON file and then a directory
+├── data
+│   ├── traj_0001.out
+│   ├── traj_0100.out
+│   ├── traj_0200.out
+│   ├── ...
+│   └── traj_2500.out
+├── data_json.json
+└── ...
+```
 
+
+### Scripting Examples
+
+The following example is a basic script rendering the TA spectrum with data loaded from a directory.
+
+```
+# Loading data from directory ./data
+load ./data
+# Rendering the TA spectrum
+render ta to ta_spectrum.png
+```
+
+Note that you can achieve the exact same thing with the shell command:
+```
+dt --load-dir ./data --ta ta_spectrum.png
+```
+
+Scripts shine when you want to achieve something more complicated. Here, it is shown how to load from multiple sources:
+
+
+```
 # Loading data
 # Note that loading from multiple sources does not override any data and the ESA spectra are resorted according to their timestamp after loading.
 load data_json.json
-load ./data_directory
+load ./data
 
 # Rendering the TA spectrum
 render ta to ./output/ta_spectrum.png
@@ -81,23 +124,64 @@ render all esa to ./esa_output/esa
 render every 5+1 esa to ./output/esa_offset
 ```
 
+The next example shows how to utilise the ESA commands:
+
+```
+# Loading data
+load ./data
+
+# Rendering all ESA spectra
+# Suppose the timestamp difference is 100, then the filenames will be esa_0.png, esa_100.png, ...
+render all esa to ./esa_output/esa
+# Render esa spectra of index 1, 6, 11, ...
+render every 5+1 esa to ./output/esa_offset
+# Render first esa spectrum
+render esa 0 to first_esa_spectrum.png
+```
+
+This examples shows the usage of slices:
+
+```
+# Loading data
+load ./data
+
+# Rendering a slice at 420 nm
+render slice at wavelength 420 to slice_420.png
+# Rendering a slice averaged between (420-69) and (420+69) nm.
+render avg slice at wavelength 420 spanning 69 to slice_420_avg.png
+```
+
+Here is how you can set configs in runtime.
+
+```
+# Loading data
+load ./data
+
+# Setting the wavelength_range
+set config wavelength_range_lower to 100
+set config wavelength_range_upper to 1000
+
+# Renderin the TA spectrum
+render ta to ta_spectrum.png
+```
+
 ### Command line Examples
 
-Suppose you have the following data structre and you want the TA spectrum as well as all ESA spectrum rendered. 
+There are a handful of shortcuts that can be directly accessed from the command line. These are
 
+- Creating a TA spectrum from a data directory:
 ```
-├── data
-│   ├── traj_0001.out
-│   ├── traj_0100.out
-│   ├── traj_0200.out
-│   ├── ...
-│   └── traj_2500.out
-└── ... 
+dynamic-taxes --load-dir ./data --ta ta_spectrum.png
 ```
-
-The ESA spectra should be rendered to a new folder called `output`. Note that you do not have to manually create the output folder (or child folders thereof), Dynamic-Taxes does this automatically. The only command you have run is:
-
+- Creating all ESA spectra from a data directory:
 ```
-dynamic-taxes --load-dir ./data --ta ta_spectrum.png --esa output/esa
+dynamic-taxes --load-dir ./data --esa esa_spectra/esa
+```
+- Creating a TA spectrum from a json file:
+```
+dynamic-taxes --load-json data_json.json --ta ta_spectrum.png
+```
+- Creating all ESA spectra from a json file:
+dynamic-taxes --load-json data_json.json --esa esa_spectra/esa
 ```
 
