@@ -32,6 +32,7 @@ class ExcitedStateAbsorptionSpectrum:
         self.peak_style = dt.get_config("peak_style")
         self.cmap = matplotlib.colormaps['Spectral']
         self.norm = colours.Normalize(vmin=350, vmax=820, clip=False)
+        self.linegraph_size = (dt.get_config("linegraph_width"), dt.get_config("linegraph_height"))
 
     def __eq__(self, other):
         if len(self.energies) != len(other.energies):
@@ -62,7 +63,7 @@ class ExcitedStateAbsorptionSpectrum:
         if ax is None:
             self_plot = True
             plt.figure()
-            fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8,6))
+            fig, ax = plt.subplots(nrows=1, ncols=1, figsize=self.linegraph_size)
        
         ax.margins(x=0, y=0)
         ax.set_xlim(self.wavelength_range[0], self.wavelength_range[1])
