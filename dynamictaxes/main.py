@@ -50,7 +50,7 @@ def load_configs():
     return dynamictaxes.get_config("username") == "USERNAME" or dynamictaxes.get_config("exec_mode") == "EXEC_MODE" or dynamictaxes.get_config("conda_env") == "CONDA_ENV"
 
 def gen_pytext(lines):
-    pytext = "# This is an automatically generated temp file that is used for program execution.\n\n\nimport dynamictaxes as dt\n\n"
+    pytext = "# This is an automatically generated temp file that is used for program execution.\n\nimport dynamictaxes as dt\ndt.init_configs()\n\n"
     loader_exists = False
     esa_shortcut = False
     for line in lines:
@@ -119,13 +119,14 @@ def make_qsub_script(args_dict):
     template = template.replace("{username}", dynamictaxes.get_config("username"))
     template = template.replace("{conda_env}", dynamictaxes.get_config("conda_env"))
     template = template.replace("{pyscript}", args_dict["pyscript"])
-    args_dict["qsubscript"] = "dyntax_temp" + str(time.time()).replace(".", "") + ".sh"
-    with open(args_dict["qsubscript"], "w") as qsubf:
+    args_dict["qsubscript"] = "dttemp" + args_dict["selftime"]
+    with open(args_dict["qsubscript"]+".sh", "w") as qsubf:
         qsubf.write(template)
     return args_dict
 
 def prepare_script(args_dict):
     args = sys.argv[1:]
+    args_dict["selftime"] = str(time.time()).replace(".", "") 
 
     if args_dict["configs_unset"] and not "--config" in args:
         args_dict["noexec"] = True
@@ -144,8 +145,8 @@ def prepare_script(args_dict):
             lines = sf.readlines()
         lines = [l.replace("\n", "").strip() for l in lines]
         pytext = gen_pytext(lines)
-        args_dict["pyscript"] = "temppy" + str(time.time()).replace(".", "") + ".py"
-        with open(args_dict["pyscript"], "w") as pf:
+        args_dict["pyscript"] = "pytemp" + args_dict["selftime"]
+        with open(args_dict["pyscript"]+".py", "w") as pf:
             pf.write(pytext)
     args_dict["noexec"] = "--noexec" in args
     if "--ta" in args:
@@ -168,8 +169,8 @@ def prepare_script(args_dict):
         if "esa" in args_dict:
             pseudoscript.append("render all esa to " + args_dict["esa"])
         pytext = gen_pytext(pseudoscript)
-        args_dict["pyscript"] = "temppy" + str(time.time()).replace(".", "") + ".py"
-        with open(args_dict["pyscript"], "w") as pf:
+        args_dict["pyscript"] = "pytemp" + args_dict["selftime"]
+        with open(args_dict["pyscript"]+".py", "w") as pf:
             pf.write(pytext)
 
     args_dict["cluster"] = dynamictaxes.get_config("exec_mode") == "cluster"
@@ -187,15 +188,16 @@ def prepare_script(args_dict):
 
 def exec_script(args):
     if args["cluster"]:
-        subprocess.run(["qsub", args["qsubscript"]])
+        subprocess.run(["qsub", args["qsubscript"]+".sh"])
     elif args["local"]:
-        subprocess.run(["python", args["pyscript"]])
+        subprocess.run(["python", args["pyscript"]+".py"])
 
 def main():
     configs_unset = load_configs()
     args = prepare_script({"configs_unset" : configs_unset})
-    if args["noexec"]:
-        return
+    if "noexec" in args:
+        if args["noexec"]:
+            return
     exec_script(args)
 
 

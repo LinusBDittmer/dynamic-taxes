@@ -28,8 +28,8 @@ class ExcitedStateAbsorptionSpectrum:
         self.resolution = dt.get_config("wavelength_res")
         self.dpi = dt.get_config("dpi")
         self.wavelength_range = [dt.get_config("wavelength_range_lower"), dt.get_config("wavelength_range_upper")]
-        self.normalise_peakheight = dt.get_config("normalise_peakheight")
-        self.peak_style = dt.gt_config("peak_style")
+        self.normalise_peakheight = dt.get_config("normalise_peak_height")
+        self.peak_style = dt.get_config("peak_style")
         self.cmap = matplotlib.colormaps['Spectral']
         self.norm = colours.Normalize(vmin=350, vmax=820, clip=False)
 

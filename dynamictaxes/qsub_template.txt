@@ -19,8 +19,8 @@ O_HOME=$PBS_O_HOME
 NODES=$(< $PBS_NODEFILE)
 NODES_UNIQUE=$(echo "$NODES" | sort -u)
 RETURN_VALUE=0
-NODE_SCRATCHDIR="/lscratch/{username}/gs1_m3_benzene_s3_$PBS_JOBID"
-NODE_WORKDIR="/scratch/{username}/gs1_m3_benzene_s3_$PBS_JOBID"
+NODE_SCRATCHDIR="/lscratch/{username}/{pyscript}_$PBS_JOBID"
+NODE_WORKDIR="/scratch/{username}/{pyscript}_$PBS_JOBID"
 
 echo ------------------------------------------------------
 echo "Job is running on nodes"
@@ -40,9 +40,9 @@ echo
 
 echo "Setting up job..."
 echo "Creating Working Directory..."
-mkdir $NODE_WORKDIR
+mkdir -p $NODE_WORKDIR
 echo "Restarting bashrc..."
-source /export/home/ccprak16/.bashrc
+source $O_HOME/.bashrc
 echo "Restarting conda..."
 source $O_HOME/anaconda3/etc/profile.d/conda.sh
 cd $O_HOME/anaconda3/envs
@@ -52,7 +52,7 @@ cd $PBS_O_WORKDIR
 echo "Finished Setting up!"
 
 echo "Starting job execution..."
-python {pyscript}
+python {pyscript}.py
 echo "Finished job execution!"
 
 exit $RETURN_VALUE

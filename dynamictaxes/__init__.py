@@ -21,6 +21,11 @@ def TransientAbsorptionSpectrum():
 def Loader():
     return loader.Loader()
 
+def debug_init_configs():
+    main.load_configs()
+def init_configs():
+    main.load_configs()
+
 def get_config(name):
     global configs
     return configs[name] 

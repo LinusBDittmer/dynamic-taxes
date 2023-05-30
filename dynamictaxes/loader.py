@@ -83,5 +83,15 @@ class Loader:
 
 
 if __name__ == '__main__':
+    import dynamictaxes as dt
+    dt.debug_init_configs()
     l = Loader()
-    l.load_from_dir("./", save_json=True)
+    for i in range(100):
+        esa = dt.ExcitedStateAbsorptionSpectrum()
+        esa.time = i*20
+        esa.energies = numpy.linspace(2.0+i/70, 4.5, num=3)
+        esa.transition_moments = (i/500+0.5)*numpy.ones(3)
+        esa.excited_state_labels = ["S2", "S3", "S4"]
+        esa.state_num = 1
+        l.ta_spectrum.add_esa_spectrum(esa)
+    l.save_to_json("content.json")
