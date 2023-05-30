@@ -67,7 +67,7 @@ For more complex instructions, Dynamic-Taxes allows the generation of script fil
 | `render every <num>[+<offset>] esa to <output>` | If data has been loaded, every _num_ ESA spectrum starting with _offset_ (if specified) is rendered to `<output>_[timestamp].png`. |
 | `render esa <num> to <output>` | If data has been loaded, the ESA spectrum with index _num_ is rendered to `<output>.png`. _Keep in mind that indexing always starts at 0._ |
 | `render slice at wavelength <wavelength> to <output>` | If data has been loaded, a slice of the TA spectrum at `<wavelengt>` nm is rendered to `<output>.png`. |
-| `render <avg|averaged> slice at wavelength <wavelength> spanning <halfspan> to <output>` | If data has been loaded, the time-dependent absorption is averaged between `<wavelength> - <halfspan>` and `<wavelength> + <halfspan>` and the standard deviation over said interval is calculated. It is rendered to `<output>.png`. |
+| `render <avg\|averaged> slice at wavelength <wavelength> spanning <halfspan> to <output>` | If data has been loaded, the time-dependent absorption is averaged between `<wavelength> - <halfspan>` and `<wavelength> + <halfspan>` and the standard deviation over said interval is calculated. It is rendered to `<output>.png`. |
 | `# Comment` | A comment. Inline comments are also allowed. |
 
 ## Setting Configs
