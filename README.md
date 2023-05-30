@@ -42,7 +42,7 @@ The following arguments are allowed:
 - `--noexec` Build the python (and perhaps qsub file), but do not execute them.
 - `--cluster` Execute the script on the cluster as a job with qsub
 - `--local` Execute the script locally. If both `--cluster` and `--local` are set, `--cluster` takes priority.
-- `--load-dir <file>` Load ESA data from a directory of .out files, which are named [...]_[number].out (Regex: [a-zA-Z0-9]*_[0-9]+\.out) The trailing number is used as an indication for the timestamp.
+- `--load-dir <file>` Load ESA data from a directory of .out files, which are named `[...]_[number].out` (Regex: `[a-zA-Z0-9]*_[0-9]+\.out`) The trailing number is used as an indication for the timestamp.
 - `--load-json <file>` Load ESA data from a .json file.
 - `--save-json <output>` Only activate when `--load-dir` is active too. The data loaded from the directory is then saved into <output>.
 - `--ta <output>` Render the TA spectrum. Make sure that the `--script` flag is not set if using this. The file will be rendered to <output>.png
