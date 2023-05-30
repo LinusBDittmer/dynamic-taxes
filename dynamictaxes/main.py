@@ -187,6 +187,8 @@ def prepare_script(args_dict):
         args_dict["load-dir"] = args[args.index("--load-dir")+1]
     if "--load-json" in args:
         args_dict["load-json"] = args[args.index("--load-json")+1]
+    if "--save-json" in args:
+        args_dict["save-json"] = args[args.index("--save-json")+1]
 
     if not "--script" in args:
         pseudoscript = []
@@ -194,6 +196,8 @@ def prepare_script(args_dict):
             pseudoscript.append("load " + args_dict["load-dir"])
         if "load-json" in args_dict:
             pseudoscript.append("load " + args_dict["load-json"])
+        if "save-json" in args_dict:
+            pseudoscript.append("save json to " + args_dict["save-json"])
         if "ta" in args_dict:
             pseudoscript.append("render ta to " + args_dict["ta"])
         if "esa" in args_dict:

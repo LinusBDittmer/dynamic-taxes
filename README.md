@@ -17,7 +17,7 @@ conda install conda-build
 conda install -c conda-forge numpy scipy matplotlib
 ```
 
-Note that this step will take a while. The next step is performed entirely by the internal setup script, therefore you just have to download and execute it.
+Note that this step will take a while. The next step is performed entirely by the internal setup script, therefore you just have to download and execute it. Run the following lines of code and replace `<workspace>` with the directory where you want to put the code and `<conda-env>` with the name of your conda environment (here: dynamic-taxes).
 
 ```
 wget https://raw.githubusercontent.com/LinusBDittmer/dynamic-taxes/master/dynamictaxes/installer.sh
@@ -47,7 +47,7 @@ The following arguments are allowed:
 - `--load-json <file>` Load ESA data from a .json file.
 - `--save-json <output>` Only activate when `--load-dir` is active too. The data loaded from the directory is then saved into `<output>`.
 - `--ta <output>` Render the TA spectrum. Make sure that the `--script` flag is not set if using this. The file will be rendered to `<output>`.png
-- `--esa <output>` Render all ESA spectra to the output
+- `--esa <output>` Render all ESA spectra to `<output>_[number].png`
   
 ## Script Files in Dynamic-Taxes
 
@@ -59,6 +59,8 @@ Sets the value for the config key `<key>` to `<value>`. Note that this is comple
 Loads all data from the specified location. If the specified locator ends in `.json`, it is treated as a JSON file, otherwise it is assumed to be a directory.
 - `read <directory|jsonfile.json>` 
 Alias for `load`
+- `save json to <output>`
+The data loaded from directories is saved into `<output>.json`
 - `render ta to <output>` 
 If data has been loaded, the resulting TA spectrum is rendered to `<output>.png`
 - `render all esa to <output>` 
@@ -111,14 +113,16 @@ Scripts shine when you want to achieve something more complicated. Here, it is s
 
 ```
 # Loading data
-# Note that loading from multiple sources does not override any data and the ESA spectra are resorted according to their timestamp after loading.
+# Note that loading from multiple sources does not override any data and the ESA spectra 
+# are resorted according to their timestamp after loading.
 load data_json.json
 load ./data
 
 # Rendering the TA spectrum
 render ta to ./output/ta_spectrum.png
 # Rendering all ESA spectra
-# Suppose the timestamp difference is 100, then the filenames will be esa_0.png, esa_100.png, ...
+# Suppose the timestamp difference is 100, then the filenames will be esa_0.png, 
+# esa_100.png, ...
 render all esa to ./esa_output/esa
 # Render esa spectra of index 1, 6, 11, ...
 render every 5+1 esa to ./output/esa_offset
@@ -131,7 +135,8 @@ The next example shows how to utilise the ESA commands:
 load ./data
 
 # Rendering all ESA spectra
-# Suppose the timestamp difference is 100, then the filenames will be esa_0.png, esa_100.png, ...
+# Suppose the timestamp difference is 100, then the filenames will be esa_0.png, 
+# esa_100.png, ...
 render all esa to ./esa_output/esa
 # Render esa spectra of index 1, 6, 11, ...
 render every 5+1 esa to ./output/esa_offset
@@ -182,6 +187,7 @@ dynamic-taxes --load-dir ./data --esa esa_spectra/esa
 dynamic-taxes --load-json data_json.json --ta ta_spectrum.png
 ```
 - Creating all ESA spectra from a json file:
+```
 dynamic-taxes --load-json data_json.json --esa esa_spectra/esa
 ```
 
