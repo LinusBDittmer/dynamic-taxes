@@ -39,17 +39,17 @@ dyntax [...]
 The following arguments are allowed:
 
 | Flag | Description |
-| ... | ... |
-| `--config` | Opens the configuration file. Dynamic-Taxes might force you to do this if important variables are unset. |
-| `--script <script-file>` | The instructions should be read from `<script-file>`. See 'Script Files in Dynamic-Taxes' for more information. |
-| `--noexec` | Build the python (and perhaps qsub file), but do not execute them. |
-| `--cluster` | Execute the script on the cluster as a job with qsub. |
-| `--local` | Execute the script locally. If both `--cluster` and `--local` are set, `--cluster` takes priority. |
-| `--load-dir <file>` | Load ESA data from a directory of .out files, which are named `[...]_[number].out` (Regex: `[a-zA-Z0-9]*_[0-9]+\.out`) The trailing number is used as an indication for the timestamp. |
-| `--load-json <file>` | Load ESA data from a .json file. |
-| `--save-json <output>` | Only activate when `--load-dir` is active too. The data loaded from the directory is then saved into `<output>`. |
-| `--ta <output>` | Render the TA spectrum. Make sure that the `--script` flag is not set if using this. The file will be rendered to `<output>.png`. |
-| `--esa <output>` | Render all ESA spectra to `<output>_[number].png` |
+| --- | --- |
+| `--config` 			| Opens the configuration file. Dynamic-Taxes might force you to do this if important variables are unset. |
+| `--script <script-file>` 	| The instructions should be read from `<script-file>`. See 'Script Files in Dynamic-Taxes' for more information. |
+| `--noexec`	 		| Build the python (and perhaps qsub file), but do not execute them. |
+| `--cluster` 			| Execute the script on the cluster as a job with qsub. |
+| `--local` 			| Execute the script locally. If both `--cluster` and `--local` are set, `--cluster` takes priority. |
+| `--load-dir <file>` 		| Load ESA data from a directory of .out files, which are named `[...]_[number].out` (Regex: `[a-zA-Z0-9]*_[0-9]+\.out`) The trailing number is used as an indication for the timestamp. |
+| `--load-json <file>` 		| Load ESA data from a .json file. |
+| `--save-json <output>` 	| Only activate when `--load-dir` is active too. The data loaded from the directory is then saved into `<output>`. |
+| `--ta <output>` 		| Render the TA spectrum. Make sure that the `--script` flag is not set if using this. The file will be rendered to `<output>.png`. |
+| `--esa <output>` 		| Render all ESA spectra to `<output>_[number].png` |
 
 
 ## Script Files in Dynamic-Taxes
