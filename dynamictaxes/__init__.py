@@ -12,7 +12,6 @@ import dynamictaxes.main as main
 
 configs = None
 
-
 def ExcitedStateAbsorptionSpectrum():
     return esa.ExcitedStateAbsorptionSpectrum()
 
@@ -23,12 +22,16 @@ def Loader():
     return loader.Loader()
 
 def debug_init_configs():
-    main.load_configs()
+    configs = {}
+    configs["testkey"] = "testval"
+
 def init_configs():
     main.load_configs()
 
 def get_config(name):
     global configs
+    if not name in configs:
+        return None
     return configs[name] 
 
 def set_config(config_dict):

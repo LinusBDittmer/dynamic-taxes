@@ -11,7 +11,7 @@ import dynamictaxes as dt
 class TestLoader(unittest.TestCase):
 
     def setUp(self):
-        dt.init_configs()
+        dt.debug_init_configs()
         self.loader = dt.Loader()
 
     def tearDown(self):

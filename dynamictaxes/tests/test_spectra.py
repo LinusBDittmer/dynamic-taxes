@@ -10,7 +10,7 @@ import dynamictaxes as dt
 class TestESASpectrum(unittest.TestCase):
 
     def setUp(self):
-        dt.init_configs()
+        dt.debug_init_configs()
         self.esa_spectrum = dt.ExcitedStateAbsorptionSpectrum()
 
     def tearDown(self):
