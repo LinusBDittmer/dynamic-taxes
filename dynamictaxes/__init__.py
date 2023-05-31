@@ -4,10 +4,17 @@ Main Package for the dynamic-taxes module
 
 '''
 
-import dynamictaxes.excited_state_absorption_spectrum as esa
-import dynamictaxes.transient_absorption_spectrum as tas
-import dynamictaxes.loader as loader
-import dynamictaxes.main as main
+try:
+    import dynamictaxes.excited_state_absorption_spectrum as esa
+    import dynamictaxes.transient_absorption_spectrum as tas
+    import dynamictaxes.loader as loader
+    import dynamictaxes.main as main
+except:
+    import dynamic-taxes.excited_state_absorption_spectrum as esa
+    import dynamic-taxes.transient_absorption_spectrum as tas
+    import dynamic-taxes.loader as loader
+    import dynamic-taxes.main as main
+
 
 configs = None
 
