@@ -6,10 +6,7 @@ PyTest Test class for loader.py
 
 import unittest
 import subprocess
-try:
-    import dynamictaxes as dt
-except:
-    import dynamic-taxes as dt
+import dynamictaxes as dt
 
 class TestLoader(unittest.TestCase):
 
