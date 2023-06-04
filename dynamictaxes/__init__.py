@@ -1,6 +1,17 @@
 '''
 
-Main Package for the dynamic-taxes module
+=== THE DYNAMIC-TAXES MODULE ===
+
+The Dynamic-Taxes module is a Python module that allows for the extraction of ESA data from QChem Files, saving these in a lightweight json format and rendering them to image files. For a detailed explanation of installing and using Dynamic-Taxes, pleas visit the GitHub Page https://github.com/LinusBDittmer/dynamic-taxes
+
+
+Non-Python Files
+----------------
+default.config:
+    This file stores permanent configurations and can be modified.
+installer.sh:
+    This file is a simple installer that brings Dynamic-Taxes to your system. 
+
 
 '''
 

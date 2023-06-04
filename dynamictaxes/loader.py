@@ -11,14 +11,51 @@ import re
 import dynamictaxes
 
 class Loader:
+    '''
+    This class loads data from a directory containing QChem OUT-Files or from a JSON file.
+
+    Attributes
+    ----------
+    ta_spectrum : dynamictaxes.transient_absorption_spectrum.TransientAbsorptionSpectrum
+        TA spectrum in which everything is saved.
+
+    Methods
+    -------
+    reset()
+        Delete all saved data.
+    load_from_dir(dirpath, save_json=False, jsonpath='./content.json', compact=False)
+        Load data from the directoy specified in dirpath. If save_json is True, it is saved into a JSON file.
+    load_from_json(jsonpath)
+        Load data from the JSON file specified in jsonpath
+    save_to_json(jsonpath, compact=False)
+        Write the saved data to the JSON file specified in jsonpath. If compact is True, whitespace and indentation are not included.
+    '''
 
     def __init__(self):
         self.ta_spectrum = dynamictaxes.TransientAbsorptionSpectrum()
 
     def reset(self):
+        '''
+        Deletes all data save in ta_spectrum.
+        '''
         self.ta_spectrum = dynamictaxes.TransientAbsorptionSpectrum()
 
     def load_from_dir(self, dirpath, save_json=False, jsonpath='./content.json', compact=False):
+        '''
+        Loads data from all relevant files in the given dirpath. Only files abiding by a specific name structure are included. Their name has to end in .out, it has to contain an underscore, which can be prefaced by any string, and must be followed by at least one number. The number after the underscore is interpreted as a timestamp.
+
+        Parameters
+        ----------
+        dirpath : str
+            The directory from which the data should be loaded.
+        save_json : bool, optional
+            Whether the loaded data should be saved to a JSON file. Default False
+        jsonpath : str, optional
+            If save_json is True, the data is saved to this variable. Default './content.json'
+        compact : bool, optional
+            If save_json is True, this variable determines whether the JSON file is compact or not.
+
+        '''
         all_content = os.listdir(dirpath)
         regex = re.compile("[a-zA-Z0-9]*_[0-9]+\.out")
         out_files = list(filter(regex.match, all_content))
@@ -35,6 +72,14 @@ class Loader:
             self.save_to_json(jsonpath, compact=compact)
 
     def load_from_json(self, jsonpath):
+        '''
+        This method loads data from the specified json file.
+
+        Parameters
+        ----------
+        jsonpath : str
+            The path of the JSON file from which the data should be loaded.
+        '''
         json_dict = {}
         with open(jsonpath, "r") as jsonfile:
             json_dict = json.load(jsonfile)
@@ -50,7 +95,7 @@ class Loader:
 
     def save_to_json(self, jsonpath, compact=False):
         '''
-        JSON structure:
+        This method saves the data in ta_spectrum into a JSON file specified in jsonpath. The structure of the JSON file is as follows:
 
         {
             "esa1":
@@ -66,6 +111,13 @@ class Loader:
             },
             ...
         }
+
+        Paramters
+        ---------
+        jsonpath : str
+            The path to which the json file should be saved
+        compact : bool, optional
+            Whether the json enconding should be compact. If not, an indentation level of 4 is used.
 
         '''
         json_dict = {}

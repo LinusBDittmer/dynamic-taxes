@@ -22,6 +22,11 @@ Note that this step will take a while. The next step is performed entirely by th
 ```
 wget https://raw.githubusercontent.com/LinusBDittmer/dynamic-taxes/master/dynamictaxes/installer.sh
 bash installer.sh <workspace> <conda-env>
+```
+
+It is recommended you delete the installer afterwards. Additionally, if you want to use Dynamic-Taxes immediately, you have to restart your bashrc. Therefore, it is wise to execute the following to lines of code afterwards.
+
+```
 rm installer.sh
 source ~/.bashrc
 ```
@@ -242,4 +247,7 @@ dynamic-taxes --load-json data_json.json --ta ta_spectrum.png
 ```
 dynamic-taxes --load-json data_json.json --esa esa_spectra/esa
 ```
-
+- Saving Data into a json file:
+```
+dynamic-taxes --load-dir ./data --save-json data_json.json
+```
