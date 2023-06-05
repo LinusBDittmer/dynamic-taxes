@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dynamictaxes"
-version = "0.0.1"
+version = "0.1"
 authors = [
   { name="Linus Bjarne Dittmer", email="iu254@stud.uni-heidelberg.de" },
   { name="Luis Herguth", email="luis.herguth@stud.uni-heidelberg.de"},

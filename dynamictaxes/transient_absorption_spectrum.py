@@ -182,7 +182,8 @@ class TransientAbsorptionSpectrum:
 
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=self.linegraph_size)
         ax.margins(0,0)
-        ax.fill_between(timestamps, intensities-intensities_stdev, intensities+intensities_stdev, color=self.colour, alpha=0.3, linewidth=0)
+        ax.fill_between(timestamps, intensities-intensities_stdev, intensities+intensities_stdev, color=self.colour, alpha=0.2, linewidth=0)
+        ax.fill_between(timestamps, intensities-2*intensities_stdev, intensities+2*intensities_stdev, color=self.colour, alpha=0.2, linewidth=0)
         ax.plot(timestamps, intensities, color=self.colour, linewidth=self.linewidth)
         ax.set_xlabel("Time [" + self.time_unit + "]")
         ax.set_ylabel("Transition Moment")

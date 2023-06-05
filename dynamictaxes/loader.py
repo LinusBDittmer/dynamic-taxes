@@ -57,7 +57,7 @@ class Loader:
 
         '''
         all_content = os.listdir(dirpath)
-        regex = re.compile("[a-zA-Z0-9]*_[0-9]+\.out")
+        regex = re.compile("[a-zA-Z0-9]*[0-9]+\.out")
         out_files = list(filter(regex.match, all_content))
 
         for outfile_index, outfile in enumerate(out_files):
@@ -73,7 +73,63 @@ class Loader:
                 transition_moments
                 excited_state_labels
                 '''
+                content = ''.join(of.read())
+                
+                # Load multiplicity
+                multiplicity_start = content.find('\n0 1\n')+3
+                multiplicity_content = content[multiplicity_start:multiplicity_start+1]
+                esa.multiplicity = int(multiplicity_content)
+                
+                # Load energies
+                ex_start = content.find('Excited state')+2
+                ref_energy_pos = content.find('excitation energy (eV) =', ex_start)+28
+                ref_energy = float(content[ref_energy_pos:content.find('\n', ref_energy_pos)])
+                energy_list = []
+                ex_start1 = content.find('Excited state', ex_start)
+                while ex_start1 > -1:
+                    ex_end = content.find('Total energy for state', ex_start1)-2
+                    ex_start2 = content.find('Excited state   ', ex_end)
+                    ex_content = content[ex_start1:ex_end]
+                    ex_energy = float(ex_content.split("=")[1].strip())-ref_energy
+                    energy_list.append(ex_energy)
+                    ex_start1 = content.find('Excited state', ex_end)                
+                esa.energies = numpy.array(energy_list)
+
+                # Transition moments
+                tm_list = []
+                tm_start_proxy = content.find('Transition Moments Between Ground')+1
+                tm_start = content.find('Transition Moments Between', tm_start_proxy)
+                tm_end_proxy = content.find('\n    1   20', tm_start)+3
+                tm_end = content.find('\n', tm_end_proxy)
+                tm_table = content[tm_start:tm_end].split('\n')[4:]
+                
+                for entry in tm_table:
+                    entry = entry.strip()
+                    tm_entry = float(entry.split()[5])
+                    tm_list.append(tm_entry)
+                
+                esa.transition_moments = numpy.array(tm_list)
+
+                # State labels
+                labels = ["S" + str(i+2) for i in range(len(tm_list))]
+                esa.excited_state_labels = labels
+
+                # Timestamp
+                geo_removed = outfile.replace(".out", "")
+                num_index = 0
+                for i in range(len(geo_removed)):
+                    if not geo_removed[len(geo_removed)-1-i].isdigit():
+                        num_index = len(geo_removed)-i
+                        break
+                timestamp = float(geo_removed[num_index:]) * 0.05 # in fs
+                esa.time = timestamp
+                
+                # State number
+                esa.state_num = 1
+
+                # Save ESA spectrum
                 self.ta_spectrum.add_esa_spectrum(esa)
+    
 
         if save_json:
             self.save_to_json(jsonpath, compact=compact)
@@ -146,14 +202,6 @@ class Loader:
 
 if __name__ == '__main__':
     import dynamictaxes as dt
-    dt.debug_init_configs()
+    dt.init_configs()
     l = Loader()
-    for i in range(100):
-        esa = dt.ExcitedStateAbsorptionSpectrum()
-        esa.time = i*20
-        esa.energies = numpy.linspace(2.0+i/70, 4.5, num=3)
-        esa.transition_moments = (i/500+0.5)*numpy.ones(3)
-        esa.excited_state_labels = ["S2", "S3", "S4"]
-        esa.state_num = 1
-        l.ta_spectrum.add_esa_spectrum(esa)
-    l.save_to_json("content.json")
+    l.load_from_dir(".", save_json=True, compact=False)
