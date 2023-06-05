@@ -59,6 +59,8 @@ class Loader:
         all_content = os.listdir(dirpath)
         regex = re.compile("[a-zA-Z0-9]*[0-9]+\.out")
         out_files = list(filter(regex.match, all_content))
+        out_files = [os.path.abspath(of) for of in out_files]
+        print(out_files)
 
         for outfile_index, outfile in enumerate(out_files):
             with open(outfile) as of:

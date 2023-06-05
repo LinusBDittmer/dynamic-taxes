@@ -42,6 +42,23 @@ def get_config_path():
     real_path = real_path[:real_path.rfind("/")]
     return real_path + "/default.config"
 
+def get_conda_path():
+    '''
+    This function returns the conda path for replacing in the qsub script.
+
+    Returns
+    -------
+    path : str
+        The conda path.
+    '''
+    anaconda3_path = os.path.expanduser("~/anaconda3/")
+    miniconda3_path = os.path.expanduser("~/miniconda3/")
+    if os.path.isdir(anaconda3_path):
+        return "anaconda3"
+    elif os.path.isdir(miniconda3_path):
+        return "minconda3"
+    return ""
+
 def get_qsub_template_path():
     '''
     This function returns the absolute path of the qsub template script.
@@ -205,6 +222,7 @@ def make_qsub_script(args_dict):
         template = "".join(tempf.readlines())
     template = template.replace("{username}", dynamictaxes.get_config("username"))
     template = template.replace("{conda_env}", dynamictaxes.get_config("conda_env"))
+    template = template.replace("{conda_installation}", get_conda_path())
     template = template.replace("{pyscript}", args_dict["pyscript"])
     template = template.replace("{selftime}", args_dict["selftime"])
     args_dict["qsubscript"] = "dttemp" + args_dict["selftime"]

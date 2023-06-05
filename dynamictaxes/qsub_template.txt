@@ -44,8 +44,8 @@ mkdir -p $NODE_WORKDIR
 echo "Restarting bashrc..."
 source $O_HOME/.bashrc
 echo "Restarting conda..."
-source $O_HOME/anaconda3/etc/profile.d/conda.sh
-cd $O_HOME/anaconda3/envs
+source $O_HOME/{conda_installation}/etc/profile.d/conda.sh
+cd $O_HOME/{conda_installation}/envs
 echo "Activating conda environment"
 conda activate {conda_env}
 cd $PBS_O_WORKDIR
