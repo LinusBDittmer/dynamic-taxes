@@ -15,10 +15,12 @@ CONDA_ENV=$2
 INSTALL_PATH=$(realpath $1)
 MAIN_PATH=$INSTALL_PATH/dynamictaxes/main.py
 
-git init $INSTALL_PATH
+cd $INSTALL_PATH
+git init .
 git remote add origin https://github.com/LinusBDittmer/dynamic-taxes.git
 git pull origin master
 conda develop -n $CONDA_ENV $INSTALL_PATH
+rm -rf .git/ .github/ .gitignore requirements.txt
 
 echo -e "\n# Dynamic taxes alias binding" >> ~/.bashrc
 echo -e "alias dynamic-taxes='python $MAIN_PATH'" >> ~/.bashrc

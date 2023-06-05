@@ -22,6 +22,11 @@ Note that this step will take a while. The next step is performed entirely by th
 ```
 wget https://raw.githubusercontent.com/LinusBDittmer/dynamic-taxes/master/dynamictaxes/installer.sh
 bash installer.sh <workspace> <conda-env>
+```
+
+It is recommended you delete the installer afterwards. Additionally, if you want to use Dynamic-Taxes immediately, you have to restart your bashrc. Therefore, it is wise to execute the following to lines of code afterwards.
+
+```
 rm installer.sh
 source ~/.bashrc
 ```
@@ -59,8 +64,8 @@ For more complex instructions, Dynamic-Taxes allows the generation of script fil
 | Command | Description |
 | --- | --- |
 | `set config <key> to <value>` | Sets the value for the config key `<key>` to `<value>`. Note that this is completely constrained to this script's runtime and does not affect the default values. Use `dt --config` for that. |
-| `load <directory|jsonfile.json>` | Loads all data from the specified location. If the specified locator ends in `.json`, it is treated as a JSON file, otherwise it is assumed to be a directory. |
-| `read <directory|jsonfile.json>` | Alias for `load`. |
+| `load <directory\|jsonfile.json>` | Loads all data from the specified location. If the specified locator ends in `.json`, it is treated as a JSON file, otherwise it is assumed to be a directory. |
+| `read <directory\|jsonfile.json>` | Alias for `load`. |
 | `save json to <output>` | The data loaded from directories is saved into `<output>.json`. |
 | `render ta to <output>` | If data has been loaded, the resulting TA spectrum is rendered to `<output>.png`. |
 | `render all esa to <output>` | If data has been loaded, all ESA spectra are rendered to `<output>_[esatimestamp].png`. |
@@ -242,4 +247,7 @@ dynamic-taxes --load-json data_json.json --ta ta_spectrum.png
 ```
 dynamic-taxes --load-json data_json.json --esa esa_spectra/esa
 ```
-
+- Saving Data into a json file:
+```
+dynamic-taxes --load-dir ./data --save-json data_json.json
+```

@@ -1,7 +1,25 @@
 '''
 
-This class is the main executable for the dynamic-taxes module
+This class is the main executable for the dynamic-taxes module. 
 
+Methods
+-------
+get_config_path()
+    Return the absolute path of default.config
+get_qsub_template_path()
+    Return the absolute path of the qsub template file.
+load_configs()
+    Load the configs from default.config
+gen_pytext(lines)
+    Generate the Python executable from the DT script.
+make_qsub_script(args_dict)
+    Generate the qsub script for sending the job to the cluster
+prepare_script(args_dict)
+    Make prepations for Python executable generation
+exec_script(args)
+    Execute a Python executable either locally or on the cluster
+main()
+    Main executable function.
 '''
 
 import dynamictaxes
@@ -12,16 +30,35 @@ import subprocess
 import time
 
 def get_config_path():
+    ''' 
+    This function returns the absolute path of the default.config file.
+
+    Returns
+    -------
+    path : str
+        The absolute path of the default.config file
+    '''
     real_path = os.path.realpath(__file__)
     real_path = real_path[:real_path.rfind("/")]
     return real_path + "/default.config"
 
 def get_qsub_template_path():
+    '''
+    This function returns the absolute path of the qsub template script.
+
+    Returns
+    -------
+    path : str  
+        The absolute path of the template script.
+    '''
     real_path = os.path.realpath(__file__)
     real_path = real_path[:real_path.rfind("/")]
     return real_path + "/qsub_template.txt"
 
 def load_configs():
+    '''
+    This function loads the configs from default.config into the local configs.
+    '''
     config_path = get_config_path()
     config_dict = {}
     float_regex = re.compile("[0-9]+\.[0-9]+")
@@ -50,6 +87,19 @@ def load_configs():
     return dynamictaxes.get_config("username") == "USERNAME" or dynamictaxes.get_config("exec_mode") == "EXEC_MODE" or dynamictaxes.get_config("conda_env") == "CONDA_ENV"
 
 def gen_pytext(lines):
+    '''
+    This function generates a Python executable file from DT code. See the README for more information.
+
+    Parameters
+    ----------
+    lines : list
+        List of all lines of DT code.
+
+    Returns
+    -------
+    pytext : str
+        The content of the Python executable.
+    '''
     pytext = "# This is an automatically generated temp file that is used for program execution.\n\nimport dynamictaxes as dt\ndt.init_configs()\n\n"
     loader_exists = False
     esa_shortcut = False
@@ -136,6 +186,20 @@ def gen_pytext(lines):
     return pytext
 
 def make_qsub_script(args_dict):
+    '''
+    This function generates the qsub sending script for executing the job on the cluster by replacing certain phrases from the template. These phrases are given in the args_dict dictonary, however in this method only 5 entries are relevant.
+
+    username : The username on the cluster
+    conda_env : The conda environment for which Dynamic-Taxes is loaded.
+    pyscript : The name of the python executable (without .py)
+    selftime : The time of execution in ms for naming consistency
+    qsubscript : The name of the qsub send script (without .sh)
+
+    Parameters
+    ----------
+    args_dict : dict
+        A dictionary of arguments. In this function, only the keys 'username', 'conda_env', 'pyscript', 'selftime' and 'qsubscript' matter.
+    '''
     template = ""
     with open(get_qsub_template_path(), "r") as tempf:
         template = "".join(tempf.readlines())
@@ -149,6 +213,19 @@ def make_qsub_script(args_dict):
     return args_dict
 
 def prepare_script(args_dict):
+    '''
+    This function does all the preparative work generation of the python text. If the --script flag is set, the given file is sent to gen_pytext for generation of the python executable. Otherwise, a pseudoscript in DTSL is generated and sent to gen_pytext. See README for allowed flags and their effects.
+
+    Parameters
+    ----------
+    args_dict : dict
+        Dictionary of arguments, empty at the beginning.
+
+    Returns
+    -------
+    args_dict : dict
+        Modified dictionary of arguments.
+    '''
     args = sys.argv[1:]
     args_dict["selftime"] = str(time.time()).replace(".", "") 
 
@@ -221,6 +298,14 @@ def prepare_script(args_dict):
     return args_dict  
 
 def exec_script(args):
+    '''
+    This function executes the script employing the specified execution circumstances.
+
+    Parameters
+    ----------
+    args : dict
+        Dictionary of arguments
+    '''
     if args["cluster"]:
         subprocess.run(["qsub", args["qsubscript"]+".sh"])
     elif args["local"]:
@@ -228,6 +313,9 @@ def exec_script(args):
         subprocess.run(["rm", "-f", "*"+args["selftime"]+"*"])
 
 def main():
+    '''
+    This function is a capsule for an execution of dynamic-taxes
+    '''
     configs_unset = load_configs()
     args = prepare_script({"configs_unset" : configs_unset})
     if "noexec" in args:
