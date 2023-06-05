@@ -28,6 +28,13 @@ class Loader:
                 esa = dynamictaxes.ExcitedStateAbsorptionSpectrum()
                 '''
                 The * mAGIC *
+
+                Fields to edit:
+                time
+                multiplicity
+                energies
+                transition_moments
+                excited_state_labels
                 '''
                 self.ta_spectrum.add_esa_spectrum(esa)
 
