@@ -56,7 +56,7 @@ def get_conda_path():
     if os.path.isdir(anaconda3_path):
         return "anaconda3"
     elif os.path.isdir(miniconda3_path):
-        return "minconda3"
+        return "miniconda3"
     return ""
 
 def get_qsub_template_path():
