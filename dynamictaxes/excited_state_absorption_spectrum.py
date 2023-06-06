@@ -105,10 +105,18 @@ class ExcitedStateAbsorptionSpectrum:
             The file ending. Default png
 
         '''
-        filepattern = re.compile("[a-zA-Z0-9\-]*." + filetype)
-        if filepattern.match(path).string != path:
-            filepattern2 = re.compile("[a-zA-Z0-9\-]*.")
-            if filepattern2.match(path).string != path:
+        filepattern = re.compile("[a-zA-Z0-9\-]*\." + filetype)
+        match1 = filepattern.match(path)
+        add_filetype = match1 is None
+        if not add_filetype:
+            add_filetype = match1.string != path
+        if not contains_filetype:
+            filepattern2 = re.compile("[a-zA-Z0-9\-]*\.")
+            match2 = filepattern2.match(path)
+            add_point = match is None
+            if not add_point:
+                add_point = match2.string != path
+            if add_point:
                 path += "."
             path += filetype
         directory = path[:path.rfind("/")]
