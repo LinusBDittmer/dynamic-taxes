@@ -149,6 +149,7 @@ class TransientAbsorptionSpectrum:
         ax.set_title(self.title)
 
         plt.savefig(path, bbox_inches='tight', dpi=self.dpi)
+        plt.close()
 
     def render_avg_slice(self, centre, span, path, filetype='png', intres=100):
         '''
@@ -189,6 +190,7 @@ class TransientAbsorptionSpectrum:
         ax.set_ylabel("Transition Moment")
         ax.set_title(self.avg_slice_title.replace("{wavelength}", str(centre)).replace("{span}", str(span)))
         plt.savefig(path, bbox_inches='tight', dpi=self.dpi)
+        plt.close()
 
     def render_mono_slice(self, wavelength, path, filetype='png'):
         '''
@@ -220,6 +222,7 @@ class TransientAbsorptionSpectrum:
         ax.set_title(self.slice_title.replace("{wavelength}", str(wavelength)))
 
         plt.savefig(path, bbox_inches='tight', dpi=self.dpi)
+        plt.close()
 
     def get_spectral_density(self):
         '''

@@ -110,7 +110,7 @@ class ExcitedStateAbsorptionSpectrum:
         add_filetype = match1 is None
         if not add_filetype:
             add_filetype = match1.string != path
-        if not contains_filetype:
+        if not add_filetype:
             filepattern2 = re.compile("[a-zA-Z0-9\-]*\.")
             match2 = filepattern2.match(path)
             add_point = match is None
@@ -162,7 +162,8 @@ class ExcitedStateAbsorptionSpectrum:
 
         plt.legend()
         plt.savefig(path, dpi=self.dpi, bbox_inches='tight')
-        
+        plt.close()
+
     def _eval_scalar(self, nm):
         val = 0.0
         for i in range(len(self.energies)):
